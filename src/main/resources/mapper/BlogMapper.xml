@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sky.thumb.mapper.BlogMapper">
+
+    <resultMap id="BaseResultMap" type="com.sky.thumb.domain.Blog">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="title" column="title" jdbcType="VARCHAR"/>
+        <result property="coverImg" column="coverImg" jdbcType="VARCHAR"/>
+        <result property="content" column="content" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,title,coverImg,
+        content,createTime,updateTime
+    </sql>
+<!--    <update id="batchUpdateThumbCount">-->
+<!--        UPDATE blog-->
+<!--        SET thumbCount = thumbCount + CASE id-->
+<!--        <foreach collection="countMap" item="value" index="key">-->
+<!--            WHEN #{key} THEN #{value}-->
+<!--        </foreach>-->
+<!--        END-->
+<!--        WHERE id IN-->
+<!--        <foreach collection="countMap" item="value" index="key" open="(" separator="," close=")">-->
+<!--            #{key}-->
+<!--        </foreach>-->
+<!--    </update>-->
+    <update id="batchUpdateThumbCount">
+        UPDATE blog
+        SET thumbCount = thumbCount +
+        <trim prefix="CASE id" suffix="END">
+            <foreach collection="countMap" item="value" index="key">
+                WHEN #{key} THEN #{value}
+            </foreach>
+            ELSE 0
+        </trim>
+        WHERE id IN
+        <foreach collection="countMap" item="value" index="key" open="(" separator="," close=")">
+            #{key}
+        </foreach>
+    </update>
+
+</mapper>

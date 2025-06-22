@@ -1,0 +1,16 @@
+<!-- ... existing code ... -->
+<update id="batchUpdateThumbCount">
+    UPDATE picture
+    SET userId = userId +
+    <trim prefix="CASE id" suffix="END">
+        <foreach collection="countMap" item="value" index="key">
+            WHEN #{key} THEN #{value}
+        </foreach>
+        ELSE 0
+    </trim>
+    WHERE id IN
+    <foreach collection="countMap" item="value" index="key" open="(" separator="," close=")">
+        #{key}
+    </foreach>
+</update>
+<!-- ... existing code ... -->
